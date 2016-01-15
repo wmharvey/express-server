@@ -1,20 +1,17 @@
 var express = require('express');
 var notes = require('./routes/notes');
+var bodyParser = require('body-parser');
+var fs = require('fs');
 
-var app = express();
+module.exports = function createApp() {
 
-app.use( function(req, res, next) {
-  if (req.method !== 'POST') next();
-  var body = '';
-  req.on('data', chunk => {
-    body += chunk.toString();
-  });
-  req.on('end', () => {
-    req.body = body;
-    next();
-  });
-});
+  var app = express();
 
-app.use('/notes', notes);
+  app.use( bodyParser.urlencoded( {extended: true}) );
+  app.use( bodyParser.json() );
 
-module.exports = app;
+  app.use('/notes', notes);
+
+  return app;
+
+};
