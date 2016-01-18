@@ -1,0 +1,3 @@
+data/**
+.eslintrc.js
+test/testlogs
