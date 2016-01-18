@@ -3,14 +3,14 @@ var notes = require('./routes/notes');
 var bodyParser = require('body-parser');
 var fs = require('fs');
 
-module.exports = function createApp() {
+module.exports = function createApp(storagePath) {
 
   var app = express();
 
   app.use( bodyParser.urlencoded( {extended: true}) );
   app.use( bodyParser.json() );
 
-  app.use('/notes', notes);
+  app.use('/notes', notes(storagePath) );
 
   return app;
 
