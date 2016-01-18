@@ -8,7 +8,8 @@
     "process"     : false,
     "console"     : false,
     "it"          : false,
-    "Buffer"      : false
+    "Buffer"      : false,
+    "before"      : false
   },
   "esnext": true
 }

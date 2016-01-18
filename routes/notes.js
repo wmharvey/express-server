@@ -6,7 +6,6 @@ var mkdirp = require('mkdirp');
 function getNotesRouter (storagePath) {
   storagePath = storagePath || './data';
   var router = express.Router();
-  mkdirp(storagePath);
 
   router.get( '/', (req, res) => {
     readDirectory( function(files) {
@@ -18,12 +17,18 @@ function getNotesRouter (storagePath) {
   });
 
   router.get('/:filenumber', (req, res) => {
+    mkdirp(storagePath);
     var filepath = path.join(storagePath, req.params.filenumber + '.json');
     fs.readFile(filepath, 'utf8', (err, data) => {
-      if (err) throw err;
-      res.writeHead(200, {'Content-Type': 'text/plain'});
-      res.write(data);
-      res.end();
+      if (err) {
+        res.writeHead(404, {'Content-Type': 'text/plain'});
+        res.write("No note found");
+        res.end();
+      } else {
+        res.writeHead(200, {'Content-Type': 'text/plain'});
+        res.write(data);
+        res.end();
+      }
     });
   });
 
@@ -43,13 +48,18 @@ function getNotesRouter (storagePath) {
   return router;
 
   function readDirectory (cb) {
+    mkdirp(storagePath);
     fs.readdir(storagePath, function(err, files) {
-      var jsonFiles = files
-      //removes all files that do not have an extension like .DS_Store
-      //removes all .json extensions
-        .filter( path.extname )
-        .map ( f => path.basename(f, '.json') );
-      cb(jsonFiles);
+      if (files !== undefined && files.length > 0) {
+        var jsonFiles = files
+        //removes all files that do not have an extension like .DS_Store
+        //removes all .json extensions
+          .filter( path.extname )
+          .map ( f => path.basename(f, '.json') );
+        cb(jsonFiles);
+      } else {
+        cb([0]);
+      }
     });
   }
 
